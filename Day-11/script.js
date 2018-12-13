@@ -46,7 +46,7 @@ const FillGrid = (gridSize, serialNo) => {
 const getMaxPower = (powerGrid, gridSize, squareSize) => {
 
   const bound = gridSize - squareSize + 1;
-  let maxPower = 0;
+  let maxPower = -5 * (squareSize ** 2); // Lowest possible value.
   let xMax;
   let yMax;
   let currentPower;
@@ -86,42 +86,31 @@ const calculatePower = (powerGrid, squareSize, xStart, yStart) => {
 const getMaxPowerUltimate = (powerGrid, gridSize) => {
 
   let bound;
-  let maxPower = 0;
+  let powerMax = 0;
   let xMax;
   let yMax;
   let squareSizeMax;
-  let currentPower;
-  let maxSquareSize;
   
-  for (let squareSize = gridSize; squareSize >= 1; squareSize--) {
-    /*
-    Based on the calculation the maximum value for a point is 4.
-    So that times area of the square is the maximum value for the square.
-    Since we are iterating backwards if the max size is less that the value that we have we can quit.
-    */
-    maxSquareSize = 4 * (squareSize ** 2);
-    if (maxSquareSize < maxPower) {
-      break;
+  for (let squareSize = 1; squareSize <= gridSize; squareSize++) {
+    
+    let { x, y, power } = getMaxPower(powerGrid, gridSize, squareSize);
+
+    if (power < 0) break;    // This is far enough.
+
+    if (power > powerMax) {
+      xMax = x;
+      yMax = y;
+      squareSizeMax = squareSize;
+      powerMax = power;
     };
-    bound = gridSize - squareSize + 1;
-    for (let x = 1; x <= bound; x++) {
-      for (let y = 1; y <= bound; y++) {
-        currentPower = calculatePower(powerGrid, squareSize, x, y);
-        if (currentPower > maxPower) {
-          maxPower = currentPower;
-          squareSizeMax = squareSize;
-          xMax = x;
-          yMax = y;
-        };  
-      };
-    };
+  
   };
 
   return {
     'x': xMax,
     'y': yMax,
     'size': squareSizeMax,
-    'power': maxPower
+    'power': powerMax
   };
 
 };
@@ -142,8 +131,6 @@ const part2 = (gridSize, serialNo) => {
  
 };
 
-
-// Gotta be a more efficient way but this gets it done.
-//console.log('Part 1:', part1(300, 1308));
-console.log('Part 2:', part2(300, 18));
+console.log('Part 1:', part1(300, 1308));
+console.log('Part 2:', part2(300, 1308));
 
